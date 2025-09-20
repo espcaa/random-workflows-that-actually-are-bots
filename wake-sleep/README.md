@@ -13,3 +13,5 @@ to make ts work you need to:
 4. Activate the service
 `brew services start sleepwatcher
 `
+
+uh oops you need to have the SLACK_WORKFLOW_BOT_TOKEN env var set too :)
