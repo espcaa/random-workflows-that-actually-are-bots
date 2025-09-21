@@ -1,0 +1,16 @@
+github.com/coreos/go-oidc/v3 v3.15.0 h1:R6Oz8Z4bqWR7VFQ+sPSvZPQv4x8M+sJkDO5ojgwlyAg=
+github.com/coreos/go-oidc/v3 v3.15.0/go.mod h1:HaZ3szPaZ0e4r6ebqvsLWlk2Tn+aejfmrfah6hnSYEU=
+github.com/espcaa/skolen-go v0.1.2-0.20250921151242-fb2a7120829e h1:KZXJWY2cv2Iriiwahe5fI7GyslxFCP4fKdMHH43KGnA=
+github.com/espcaa/skolen-go v0.1.2-0.20250921151242-fb2a7120829e/go.mod h1:KaRD/SLjxKd2uFyuce1J2Dwe78hXwY7UAvgDAL12gU8=
+github.com/espcaa/skolen-go v0.1.2-0.20250921151945-ce8014567a59 h1:aIz26PNTZ86j75KIpo2jNBPoxh7g6MTQigtaYD0l1lo=
+github.com/espcaa/skolen-go v0.1.2-0.20250921151945-ce8014567a59/go.mod h1:KaRD/SLjxKd2uFyuce1J2Dwe78hXwY7UAvgDAL12gU8=
+github.com/espcaa/skolen-go v0.1.2-0.20250921153636-7f3233f0ead7 h1:P4v8ly3fhkgvylBc6kCptLvRjbpQ9tyh1CDja1G6RM8=
+github.com/espcaa/skolen-go v0.1.2-0.20250921153636-7f3233f0ead7/go.mod h1:NOplmfHR0ZJbaZ5rAaWUG2XL2GD8KVeGs2jkmgq/ptU=
+github.com/go-jose/go-jose/v4 v4.1.2 h1:TK/7NqRQZfgAh+Td8AlsrvtPoUyiHh0LqVvokh+1vHI=
+github.com/go-jose/go-jose/v4 v4.1.2/go.mod h1:22cg9HWM1pOlnRiY+9cQYJ9XHmya1bYW8OeDM6Ku6Oo=
+github.com/golang-jwt/jwt/v4 v4.5.2 h1:YtQM7lnr8iZ+j5q71MGKkNw9Mn7AjHM68uc9g5fXeUI=
+github.com/golang-jwt/jwt/v4 v4.5.2/go.mod h1:m21LjoU+eqJr34lmDMbreY2eSTRJ1cv77w39/MY0Ch0=
+golang.org/x/crypto v0.42.0 h1:chiH31gIWm57EkTXpwnqf8qeuMUi0yekh6mT2AvFlqI=
+golang.org/x/crypto v0.42.0/go.mod h1:4+rDnOTJhQCx2q7/j6rAN5XDw8kPjeaXEUR2eL94ix8=
+golang.org/x/oauth2 v0.31.0 h1:8Fq0yVZLh4j4YA47vHKFTa9Ew5XIrCP8LC6UeNZnLxo=
+golang.org/x/oauth2 v0.31.0/go.mod h1:lzm5WQJQwKZ3nwavOZ3IS5Aulzxi68dUSgRHujetwEA=
