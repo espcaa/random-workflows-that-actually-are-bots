@@ -3,7 +3,7 @@ module skolengo-bot
 go 1.24.0
 
 require (
-	github.com/espcaa/skolen-go v0.1.2-0.20250921153636-7f3233f0ead7
+	github.com/espcaa/skolen-go v0.1.2
 	github.com/joho/godotenv v1.5.1
 )
 
