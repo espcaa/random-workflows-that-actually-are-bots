@@ -38,8 +38,9 @@ func main() {
 		timetable, err := client.GetTimetable(client.UserInfo.UserID, client.UserInfo.SchoolID, client.UserInfo.EMSCode, now, now.AddDate(0, 0, 1), 0)
 		if err != nil {
 			log.Println("Error fetching timetable:", err)
-			time.Sleep(time.Hour)
-			continue
+			scheduleMessage(now.Add(10*time.Second), "there was an error fetching the timetable, there is probably a problem with the token or skolengo did an update/is down :heavysob:")
+			time.Sleep(1 * time.Minute)
+			panic(err)
 		}
 
 		for _, day := range timetable {
