@@ -78,9 +78,10 @@ func main() {
 				first.Subject.Label,
 			))
 			scheduleMessage(first.StartDateTime.Add(2*time.Second), fmt.Sprintf(
-				"i have %s hours of school today %d",
+				"i have %s hours of school today %s and should be done at %s",
 				totalDuration.Truncate(time.Minute).String(),
 				emoji,
+				last.EndDateTime.Format("15:04"),
 			))
 
 			scheduleMessage(last.EndDateTime.Add(1*time.Minute), "i'm done with school for today :yay:")
