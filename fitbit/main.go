@@ -247,10 +247,10 @@ func runBot(c *FitbitClient, runTest bool) {
 					log.Println("Error sending Slack message:", err)
 				}
 
-				bar, emoji := generateSleepBar(totalSleepMillis, c.GoalHours)
+				bar := generateSleepBar(totalSleepMillis, c.GoalHours)
 				barMessage := SlackMessage{
 					Channel: os.Getenv("SLACK_CHANNEL_ID"),
-					Text:    fmt.Sprintf("`%s` (%.1fh/%.1fh) %s", bar, hours, c.GoalHours, emoji),
+					Text:    fmt.Sprintf("`%s` (%.1fh/%.1fh)", bar, hours, c.GoalHours),
 				}
 				if err := sendSlackMessage(barMessage); err != nil {
 					log.Println("Error sending Slack message:", err)
@@ -266,7 +266,7 @@ func runBot(c *FitbitClient, runTest bool) {
 	}
 }
 
-func generateSleepBar(sleptMillis int64, goalHours float64) (string, string) {
+func generateSleepBar(sleptMillis int64, goalHours float64) string {
 	sleptHours := float64(sleptMillis) / (1000 * 60 * 60)
 	percent := (sleptHours / goalHours) * 100
 	if percent > 100 {
@@ -278,24 +278,5 @@ func generateSleepBar(sleptMillis int64, goalHours float64) (string, string) {
 		filled = totalBlocks
 	}
 
-	// add an emoji depending on the percentage
-
-	var emojiDict = map[int]string{
-		0:   ":heaviestersob:",
-		40:  ":heaviestsob:",
-		50:  ":heavysob:",
-		60:  ":updownvote:",
-		80:  ":thumbup:",
-		100: ":yay:",
-		120: ":fire:",
-		150: ":mindblown:",
-	}
-	var emoji string = ":error:"
-	for p, e := range emojiDict {
-		if percent >= float64(p) {
-			emoji = e
-		}
-	}
-
-	return strings.Repeat("█", filled) + strings.Repeat("░", totalBlocks-filled), emoji
+	return strings.Repeat("█", filled) + strings.Repeat("░", totalBlocks-filled)
 }
