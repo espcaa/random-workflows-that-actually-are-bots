@@ -61,6 +61,7 @@ func exchangeCodeForToken(code string, c *SetupClient) error {
 	data.Set("code", code)
 	data.Set("code_verifier", c.CodeVerifier)
 	data.Set("grant_type", "authorization_code")
+	data.Set("redirect_uri", "https://fitbit.alice.hackclub.app/callback")
 
 	req, err := http.NewRequest("POST", "https://api.fitbit.com/oauth2/token", bytes.NewBufferString(data.Encode()))
 	if err != nil {
