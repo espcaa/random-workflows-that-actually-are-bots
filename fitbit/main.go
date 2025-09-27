@@ -6,7 +6,9 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
 	"strings"
+	"syscall"
 	"time"
 
 	"github.com/go-chi/chi/v5"
@@ -32,6 +34,7 @@ type FitbitClient struct {
 
 func main() {
 
+	signal.Ignore(syscall.SIGPIPE)
 	// load the .env
 
 	godotenv.Load()
