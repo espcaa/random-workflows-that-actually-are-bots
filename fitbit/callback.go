@@ -14,12 +14,12 @@ import (
 type FitbitTokenResponse struct {
 	AccessToken  string `json:"access_token"`
 	RefreshToken string `json:"refresh_token"`
-	ExpiresIn    int    `json:"expires_in"`
+	ExpiresIn    int64  `json:"expires_in"`
 	TokenType    string `json:"token_type"`
 	UserID       string `json:"user_id"`
 }
 
-func HandleFitbitCallback(w http.ResponseWriter, r *http.Request, c *SetupClient) {
+func HandleFitbitCallback(w http.ResponseWriter, r *http.Request, c *SecretClient) {
 	code := r.URL.Query().Get("code")
 	if code == "" {
 		http.Error(w, "Missing code", http.StatusBadRequest)
@@ -55,7 +55,7 @@ func HandleFitbitCallback(w http.ResponseWriter, r *http.Request, c *SetupClient
 	w.Write([]byte(html))
 }
 
-func exchangeCodeForToken(code string, c *SetupClient) error {
+func exchangeCodeForToken(code string, c *SecretClient) error {
 	data := url.Values{}
 	data.Set("client_id", c.ClientID)
 	data.Set("code", code)
