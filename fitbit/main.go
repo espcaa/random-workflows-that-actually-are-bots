@@ -161,6 +161,18 @@ func checkNewSleepData(client *FitbitClient) bool {
 }
 
 func runBot(c *FitbitClient, runTest bool) {
+
+	refreshTicker := time.NewTicker(6 * time.Hour)
+	defer refreshTicker.Stop()
+
+	go func() {
+		for range refreshTicker.C {
+			if err := refreshToken(c); err != nil {
+				log.Println("Error refreshing token:", err)
+			}
+		}
+	}()
+
 	var lastSentDate string
 
 	for {
