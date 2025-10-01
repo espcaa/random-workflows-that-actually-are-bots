@@ -34,6 +34,7 @@ func main() {
 	}
 
 	for {
+		skolengo.RefreshAccessToken(client)
 		now := time.Now()
 		timetable, err := client.GetTimetable(client.UserInfo.UserID, client.UserInfo.SchoolID, client.UserInfo.EMSCode, now, now.AddDate(0, 0, 1), 0)
 		if err != nil {
