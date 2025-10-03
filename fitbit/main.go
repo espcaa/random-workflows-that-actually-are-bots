@@ -248,8 +248,8 @@ func runBot(c *FitbitClient, runTest bool) {
 					endTime = time.Now()
 				}
 
-				startStr := startTime.Format("3:04 AM")
-				endStr := endTime.Format("3:04 AM")
+				startStr := startTime.Format("3:04 PM")
+				endStr := endTime.Format("3:04 PM")
 				hours := float64(totalSleepMillis) / (1000 * 60 * 60)
 				hoursStr := fmt.Sprintf("%.1f", hours)
 
