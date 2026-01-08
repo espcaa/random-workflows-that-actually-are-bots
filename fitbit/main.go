@@ -199,16 +199,6 @@ func runBot(c *FitbitClient, runTest bool) {
 			sleepData, err := getSleep(c, today)
 			if err != nil {
 				log.Println("Error getting sleep data:", err)
-				// send a message to slack
-
-				var messageText = "i think the refresh data logic is dead :heavysob:"
-				msg := SlackMessage{
-					Channel: os.Getenv("SLACK_CHANNEL_ID"),
-					Text:    messageText,
-				}
-				if err := sendSlackMessage(msg); err != nil {
-					log.Println("Error sending Slack message:", err)
-				}
 
 				lastSentDate = today
 				continue
