@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"os/signal"
 	"strings"
@@ -63,14 +64,18 @@ func main() {
 			callbackUrl = os.Getenv("FITBIT_CALLBACK_URL")
 		}
 
-		loginURL := "https://www.fitbit.com/oauth2/authorize?client_id=" + client.ClientID +
-			"&response_type=code" +
-			"&code_challenge=" + client.CodeChallenge +
-			"&code_challenge_method=S256" +
-			"&scope=activity%20heartrate%20location%20nutrition%20oxygen_saturation%20profile" +
-			"%20respiratory_rate%20settings%20sleep%20social%20temperature%20weight" +
-			"&callback_uri=" + callbackUrl +
-			"&redirect_uri=" + callbackUrl
+		v := url.Values{}
+		v.Set("client_id", client.ClientID)
+		v.Set("response_type", "code")
+		v.Set("code_challenge", client.CodeChallenge)
+		v.Set("code_challenge_method", "S256")
+		v.Set("scope", "activity heartrate location nutrition oxygen_saturation profile respiratory_rate settings sleep social temperature weight")
+		v.Set("callback_uri", callbackUrl)
+		v.Set("redirect_uri", callbackUrl)
+
+		loginURL := "https://www.fitbit.com/oauth2/authorize?" + v.Encode()
+
+		fmt.Println(loginURL)
 
 		log.Println("Visit the following URL to authorize the application:")
 		log.Println(loginURL)
