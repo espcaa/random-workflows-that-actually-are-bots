@@ -71,7 +71,6 @@ func main() {
 		v.Set("code_challenge_method", "S256")
 		v.Set("scope", "activity heartrate location nutrition oxygen_saturation profile respiratory_rate settings sleep social temperature weight")
 		v.Set("callback_uri", callbackUrl)
-		v.Set("redirect_uri", callbackUrl)
 
 		loginURL := "https://www.fitbit.com/oauth2/authorize?" + v.Encode()
 
