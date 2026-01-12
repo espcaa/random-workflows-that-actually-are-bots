@@ -58,13 +58,18 @@ func main() {
 			port = "8080"
 		}
 
+		var callbackUrl string = "fitbit.hackclub.cc/callback"
+		if os.Getenv("FITBIT_CALLBACK_URL") != "" {
+			callbackUrl = os.Getenv("FITBIT_CALLBACK_URL")
+		}
+
 		loginURL := "https://www.fitbit.com/oauth2/authorize?client_id=" + client.ClientID +
 			"&response_type=code" +
 			"&code_challenge=" + client.CodeChallenge +
 			"&code_challenge_method=S256" +
 			"&scope=activity%20heartrate%20location%20nutrition%20oxygen_saturation%20profile" +
 			"%20respiratory_rate%20settings%20sleep%20social%20temperature%20weight" +
-			"&callback_uri=https://fitbit.alice.hackclub.app/callback"
+			"&callback_uri=" + callbackUrl
 
 		log.Println("Visit the following URL to authorize the application:")
 		log.Println(loginURL)
