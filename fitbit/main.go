@@ -59,7 +59,7 @@ func main() {
 			port = "8080"
 		}
 
-		var callbackUrl string = "fitbit.hackclub.cc/callback"
+		var callbackUrl string = "https://fitbit.hackclub.cc/callback"
 		if os.Getenv("FITBIT_CALLBACK_URL") != "" {
 			callbackUrl = os.Getenv("FITBIT_CALLBACK_URL")
 		}
