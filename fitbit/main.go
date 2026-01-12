@@ -69,7 +69,8 @@ func main() {
 			"&code_challenge_method=S256" +
 			"&scope=activity%20heartrate%20location%20nutrition%20oxygen_saturation%20profile" +
 			"%20respiratory_rate%20settings%20sleep%20social%20temperature%20weight" +
-			"&callback_uri=" + callbackUrl
+			"&callback_uri=" + callbackUrl +
+			"&redirect_uri=" + callbackUrl
 
 		log.Println("Visit the following URL to authorize the application:")
 		log.Println(loginURL)
