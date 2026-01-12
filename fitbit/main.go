@@ -21,6 +21,7 @@ type SecretClient struct {
 	Secret        string
 	CodeVerifier  string
 	CodeChallenge string
+	CallbackURL   string
 }
 
 type FitbitClient struct {
@@ -32,6 +33,8 @@ type FitbitClient struct {
 	SecretClient SecretClient `json:"-"`
 	GoalHours    float64
 }
+
+var callbackUrl string = "https://fitbit.hackclub.cc/callback"
 
 func main() {
 
@@ -59,10 +62,13 @@ func main() {
 			port = "8080"
 		}
 
-		var callbackUrl string = "https://fitbit.hackclub.cc/callback"
 		if os.Getenv("FITBIT_CALLBACK_URL") != "" {
-			callbackUrl = os.Getenv("FITBIT_CALLBACK_URL")
+			client.CallbackURL = os.Getenv("FITBIT_CALLBACK_URL")
+		} else {
+			client.CallbackURL = "https://fitbit.hackclub.cc/callback"
 		}
+
+		callbackUrl = client.CallbackURL
 
 		v := url.Values{}
 		v.Set("client_id", client.ClientID)
@@ -71,6 +77,7 @@ func main() {
 		v.Set("code_challenge_method", "S256")
 		v.Set("scope", "activity heartrate location nutrition oxygen_saturation profile respiratory_rate settings sleep social temperature weight")
 		v.Set("callback_uri", callbackUrl)
+		v.Set("redirect_uri", callbackUrl)
 
 		loginURL := "https://www.fitbit.com/oauth2/authorize?" + v.Encode()
 
