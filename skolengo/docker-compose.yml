@@ -1,0 +1,8 @@
+services:
+  skolengo-bot:
+    build: .
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./tokens.json:/app/tokens.json
