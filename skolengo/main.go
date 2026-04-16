@@ -12,6 +12,7 @@ import (
 
 	skolengo "github.com/espcaa/skolen-go"
 	"github.com/joho/godotenv"
+	"github.com/robfig/cron/v3"
 )
 
 func main() {
@@ -33,64 +34,73 @@ func main() {
 		log.Fatal(err)
 	}
 
-	for {
-		skolengo.RefreshAccessToken(client)
-		now := time.Now()
-		timetable, err := client.GetTimetable(client.UserInfo.UserID, client.UserInfo.SchoolID, client.UserInfo.EMSCode, now, now.AddDate(0, 0, 1), 0)
-		if err != nil {
-			log.Println("Error fetching timetable:", err)
-			scheduleMessage(now.Add(10*time.Second), "there was an error fetching the timetable, there is probably a problem with the token or skolengo did an update/is down :heavysob:")
-			time.Sleep(1 * time.Minute)
-			panic(err)
+	c := cron.New()
+	c.AddFunc("@every 1h", func() {
+		if client.TokenSet.ExpiresAt.Sub(time.Now()) < 30*time.Minute {
+			skolengo.RefreshAccessToken(client)
+		}
+	})
+	c.AddFunc("0 7 * * *", func() {
+		setupDay(client)
+	})
+
+	c.Start()
+	select {}
+
+}
+
+func setupDay(client *skolengo.Client) {
+
+	now := time.Now()
+	timetable, err := client.GetTimetable(client.UserInfo.UserID, client.UserInfo.SchoolID, client.UserInfo.EMSCode, now, now.AddDate(0, 0, 1), 0)
+	if err != nil {
+		log.Println("Error fetching timetable:", err)
+		return
+	}
+
+	for _, day := range timetable {
+		if len(day.Lessons) == 0 {
+			continue
 		}
 
-		for _, day := range timetable {
-			if len(day.Lessons) == 0 {
-				continue
-			}
+		first, last := day.Lessons[0], day.Lessons[len(day.Lessons)-1]
 
-			first, last := day.Lessons[0], day.Lessons[len(day.Lessons)-1]
+		// calculate an emoji based on the numbers of lessons
 
-			// calculate an emoji based on the numbers of lessons
-
-			emmojiDict := map[int]string{
-				1: ":fire:",
-				2: ":goat:",
-				3: ":yay:",
-				4: ":thumbup:",
-				5: ":updownvote:",
-				6: ":heavysob:",
-				7: ":heaviestsob:",
-				8: ":heaviestersob:",
-				9: ":skulley:",
-			}
-			emoji, ok := emmojiDict[len(day.Lessons)]
-			if !ok {
-				emoji = ":ten:"
-			}
-
-			var totalDuration time.Duration
-			for _, lesson := range day.Lessons {
-				totalDuration += lesson.EndDateTime.Sub(lesson.StartDateTime)
-			}
-			log.Printf("Total duration of school today: %v\n", totalDuration)
-
-			scheduleMessage(first.StartDateTime.Add(-1*time.Minute), fmt.Sprintf(
-				"i'm starting school now with %s :3d-sad-emoji:",
-				first.Subject.Label,
-			))
-			scheduleMessage(first.StartDateTime.Add(2*time.Second), fmt.Sprintf(
-				"i have %s hours of school today %s and should be done at %s",
-				totalDuration.Truncate(time.Minute).String(),
-				emoji,
-				last.EndDateTime.Format("15:04"),
-			))
-
-			scheduleMessage(last.EndDateTime.Add(1*time.Minute), "i'm done with school for today :yay:")
+		emmojiDict := map[int]string{
+			1: ":fire:",
+			2: ":goat:",
+			3: ":yay:",
+			4: ":thumbup:",
+			5: ":updownvote:",
+			6: ":heavysob:",
+			7: ":heaviestsob:",
+			8: ":heaviestersob:",
+			9: ":skulley:",
+		}
+		emoji, ok := emmojiDict[len(day.Lessons)]
+		if !ok {
+			emoji = ":ten:"
 		}
 
-		nextDay := time.Date(now.Year(), now.Month(), now.Day()+1, 0, 0, 0, 0, now.Location())
-		time.Sleep(time.Until(nextDay))
+		var totalDuration time.Duration
+		for _, lesson := range day.Lessons {
+			totalDuration += lesson.EndDateTime.Sub(lesson.StartDateTime)
+		}
+		log.Printf("Total duration of school today: %v\n", totalDuration)
+
+		scheduleMessage(first.StartDateTime.Add(-1*time.Minute), fmt.Sprintf(
+			"i'm starting school now with %s :3d-sad-emoji:",
+			first.Subject.Label,
+		))
+		scheduleMessage(first.StartDateTime.Add(2*time.Second), fmt.Sprintf(
+			"i have %s hours of school today %s and should be done at %s",
+			totalDuration.Truncate(time.Minute).String(),
+			emoji,
+			last.EndDateTime.Format("15:04"),
+		))
+
+		scheduleMessage(last.EndDateTime.Add(1*time.Minute), "i'm done with school for today :yay:")
 	}
 }
 
