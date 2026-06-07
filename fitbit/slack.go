@@ -1,13 +1,13 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
-	"strings"
 )
 
 type SlackMessage struct {
@@ -24,8 +24,11 @@ func sendSlackMessage(message SlackMessage) error {
 		return fmt.Errorf("$SLACK_TOKEN not set")
 	}
 
-	body := fmt.Sprintf(`{"channel":"%s","text":"%s"}`, message.Channel, message.Text)
-	req, err := http.NewRequest("POST", "https://slack.com/api/chat.postMessage", strings.NewReader(body))
+	body, err := json.Marshal(message)
+	if err != nil {
+		return err
+	}
+	req, err := http.NewRequest("POST", "https://slack.com/api/chat.postMessage", bytes.NewReader(body))
 	if err != nil {
 		return err
 	}

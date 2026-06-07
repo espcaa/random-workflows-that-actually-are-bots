@@ -94,6 +94,36 @@ func getSleep(client *FitbitClient, date string) (*FitbitSleepResponse, error) {
 
 }
 
+func getSleepRange(client *FitbitClient, startDate, endDate string) (*FitbitSleepResponse, error) {
+	req, err := http.NewRequest("GET", "https://api.fitbit.com/1.2/user/"+client.UserID+"/sleep/date/"+startDate+"/"+endDate+".json", nil)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Set("Authorization", "Bearer "+client.AccessToken)
+
+	httpClient := &http.Client{}
+	resp, err := httpClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	body, _ := io.ReadAll(resp.Body)
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("fitbit sleep range endpoint returned %d: %s", resp.StatusCode, string(body))
+	}
+
+	fmt.Println("Fitbit sleep range response:", string(body))
+
+	var sleepResp FitbitSleepResponse
+	if err := json.Unmarshal(body, &sleepResp); err != nil {
+		return nil, err
+	}
+
+	return &sleepResp, nil
+}
+
 func refreshToken(client *FitbitClient) error {
 
 	var data = fmt.Sprintf("client_id=%s&grant_type=refresh_token&refresh_token=%s", client.SecretClient.ClientID, client.RefreshToken)

@@ -151,10 +151,6 @@ func startApp(runTest bool) {
 		log.Fatal(err)
 	}
 
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	log.Println("running this janky bot")
 
 	runBot(client, runTest)
@@ -265,6 +261,48 @@ func runBot(c *FitbitClient, runTest bool) {
 					Channel: os.Getenv("SLACK_CHANNEL_ID"),
 					Text:    messageText,
 				}
+
+				// generate the ai rambling
+				var aiMessage string
+
+				// grab last 5 days for history context
+				rangeStart := time.Now().AddDate(0, 0, -5).Format("2006-01-02")
+				rangeEnd := time.Now().Format("2006-01-02")
+				rangeData, err := getSleepRange(c, rangeStart, rangeEnd)
+				if err != nil {
+					log.Println("Error getting sleep range data:", err)
+				}
+
+				sleepLogData := MakeSleepLogData(sleepData, rangeData)
+				sleepLogDataMessage, err := FormatSleepLog(sleepLogData)
+				if err != nil {
+					log.Println("Error formatting sleep log data:", err)
+					// Fallback or early return/continue if you don't want to send a blank prompt
+				}
+
+				log.Println("Generating AI rambling...")
+				promptMessages := []MistralMessage{
+					{
+						Role:    "system",
+						Content: GetSystemPrompt(),
+					},
+					{
+						Role:    "system",
+						Content: sleepLogDataMessage,
+					},
+				}
+
+				log.Println("Sleep log message:", sleepLogDataMessage)
+				aiResponse, err := Complete(promptMessages, "mistral-medium-3-5")
+				if err != nil {
+					log.Println("Error generating AI message:", err)
+
+				} else {
+					log.Println("AI response:", aiResponse)
+					aiMessage = aiResponse
+					msg.Text += "\n\n" + aiMessage
+				}
+
 				if err := sendSlackMessage(msg); err != nil {
 					log.Println("Error sending Slack message:", err)
 				}
