@@ -17,32 +17,32 @@ var sleepLogTemplateString string
 //go:embed system_prompt.txt
 var systemPromptString string
 
-type MistralResponse struct {
+type AiResponse struct {
 	Choices []struct {
-		Message MistralMessage `json:"message"`
+		Message AiMessage `json:"message"`
 	} `json:"choices"`
 }
 
-type MistralMessage struct {
+type AiMessage struct {
 	Role    string `json:"role"`
 	Content string `json:"content"`
 }
 
-type MistralRequest struct {
-	Messages []MistralMessage `json:"messages"`
-	Model    string           `json:"model"`
+type AiRequest struct {
+	Messages []AiMessage `json:"messages"`
+	Model    string      `json:"model"`
 }
 
-func (m *MistralResponse) GetContent() string {
+func (m *AiResponse) GetContent() string {
 	if len(m.Choices) > 0 {
 		return m.Choices[0].Message.Content
 	}
 	return ""
 }
 
-func Complete(messages []MistralMessage, model string) (string, error) {
+func Complete(messages []AiMessage, model, aiBaseUrl string) (string, error) {
 
-	request := MistralRequest{
+	request := AiRequest{
 		Model:    model,
 		Messages: messages,
 	}
@@ -52,12 +52,12 @@ func Complete(messages []MistralMessage, model string) (string, error) {
 		return "", err
 	}
 
-	req, err := http.NewRequest("POST", "https://api.mistral.ai/v1/chat/completions", bytes.NewReader(body))
+	req, err := http.NewRequest("POST", aiBaseUrl, bytes.NewReader(body))
 	if err != nil {
 		return "", err
 	}
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", "Bearer "+os.Getenv("MISTRAL_API_KEY"))
+	req.Header.Set("Authorization", "Bearer "+os.Getenv("AI_API_KEY"))
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
@@ -65,7 +65,7 @@ func Complete(messages []MistralMessage, model string) (string, error) {
 	}
 	defer resp.Body.Close()
 
-	var response MistralResponse
+	var response AiResponse
 	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
 		return "", err
 	}

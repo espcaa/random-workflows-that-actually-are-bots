@@ -16,6 +16,9 @@ import (
 	"github.com/joho/godotenv"
 )
 
+var aiBaseUrl string = "https://api.deepseek.com/chat/completions"
+var aiModel string = "deepseek-v4-flash"
+
 type SecretClient struct {
 	ClientID      string
 	Secret        string
@@ -281,7 +284,7 @@ func runBot(c *FitbitClient, runTest bool) {
 				}
 
 				log.Println("Generating AI rambling...")
-				promptMessages := []MistralMessage{
+				promptMessages := []AiMessage{
 					{
 						Role:    "system",
 						Content: GetSystemPrompt(),
@@ -293,7 +296,7 @@ func runBot(c *FitbitClient, runTest bool) {
 				}
 
 				log.Println("Sleep log message:", sleepLogDataMessage)
-				aiResponse, err := Complete(promptMessages, "mistral-medium-3-5")
+				aiResponse, err := Complete(promptMessages, aiModel, aiBaseUrl)
 				if err != nil {
 					log.Println("Error generating AI message:", err)
 
@@ -303,16 +306,10 @@ func runBot(c *FitbitClient, runTest bool) {
 					msg.Text += "\n\n" + aiMessage
 				}
 
-				if err := sendSlackMessage(msg); err != nil {
-					log.Println("Error sending Slack message:", err)
-				}
-
 				bar := generateSleepBar(totalSleepMillis, c.GoalHours)
-				barMessage := SlackMessage{
-					Channel: os.Getenv("SLACK_CHANNEL_ID"),
-					Text:    fmt.Sprintf("`%s` (%.1fh/%.1fh)", bar, hours, c.GoalHours),
-				}
-				if err := sendSlackMessage(barMessage); err != nil {
+				msg.Text += "\n\n" + fmt.Sprintf("`%s` (%.1fh/%.1fh)", bar, hours, c.GoalHours)
+
+				if err := sendSlackMessage(msg); err != nil {
 					log.Println("Error sending Slack message:", err)
 				}
 
